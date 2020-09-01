@@ -16,12 +16,12 @@ Retos del curso de Desarrollo de Aplicaciones para Dispositivos Móviles. [movil
 03. `2020-09-15` Graphical interface
 04. `2020-09-22` Menus and dialog boxes
 05. `2020-09-29` Graphics and sound
-  `2020-10-06` Project preview
+    `2020-10-06` Project preview
 06. `2020-10-13` Settings
 07. `2020-10-20` Online Tic-Tac-Toe
 08. `2020-11-03` SQLite
 09. `2020-11-17` GPS
 10. `2020-11-24` Webservices
 11. `2020-12-01` NFC
-  `2020-12-10` Project presentation
+    `2020-12-10` Project presentation
 
