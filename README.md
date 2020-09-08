@@ -12,7 +12,7 @@ Retos del curso de Desarrollo de Aplicaciones para Dispositivos Móviles. [movil
 
 00. `2020-08-27` Hello World
 01. `2020-09-01` Project proposal ([files](https://drive.google.com/drive/folders/1UeRHGa-39mvW7520MCARS9NcAL7oweJi))
-02. `2020-09-08` Prototype and business model canvas
+02. `2020-09-08` Prototype and business model canvas ([files](https://drive.google.com/drive/folders/1fPNCSjHeRw29xY7-mhYeIkU1miQYp-Qf))
 03. `2020-09-15` Graphical interface
 04. `2020-09-22` Menus and dialog boxes
 05. `2020-09-29` Graphics and sound\
