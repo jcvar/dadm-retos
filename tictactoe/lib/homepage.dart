@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tictactoe/gamebutton.dart';
 import 'package:tictactoe/windialog.dart';
+
+// enum Difficulty { easy, medium, hard }
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,10 +17,12 @@ class _HomePageState extends State<HomePage> {
   var p1;
   var p2;
   var activep;
+  String dffclt;
 
   @override
   void initState() {
     super.initState();
+    dffclt = 'Medium';
     buttonsList = doInit();
   }
 
@@ -119,10 +125,79 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> menuOptions(String value) async {
+    switch (value) {
+      case 'newgame':
+        resetGame();
+        break;
+      case 'difficulty':
+        var newdffclt = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SimpleDialog(
+                title: Text('Select difficulty:'),
+                children: [
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.pop(context, 'Easy');
+                    },
+                    child: Text('Easy'),
+                  ),
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.pop(context, 'Medium');
+                    },
+                    child: Text('Medium'),
+                  ),
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.pop(context, 'Hard');
+                    },
+                    child: Text('Hard'),
+                  ),
+                ],
+              );
+            });
+        if (newdffclt == 'Easy' ||
+            newdffclt == 'Medium' ||
+            newdffclt == 'Hard') {
+          setState(() {
+            dffclt = newdffclt as String;
+          });
+        }
+        break;
+      case 'quit':
+        exit(0); //SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Tic Tac Toe')),
+      appBar: AppBar(
+        title: Text('Tic Tac Toe'),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: menuOptions,
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'newgame',
+                child: Text('New game'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'difficulty',
+                child: Text('Difficulty'),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem<String>(
+                value: 'quit',
+                child: Text('Quit game'),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -151,14 +226,44 @@ class _HomePageState extends State<HomePage> {
                       disabledColor: buttonsList[i].bg,
                     ))),
           ),
-          RaisedButton(
-              child: Text('RESET',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  )),
-              color: Colors.yellow,
-              padding: const EdgeInsets.all(20.0),
-              onPressed: resetGame)
+          Center(
+            child: Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Text('Difficulty: ' + dffclt,
+                    style: TextStyle(fontSize: 20.0))),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: RaisedButton(
+                    child: Text('New Game',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        )),
+                    color: Colors.blue,
+                    padding: const EdgeInsets.all(16.0),
+                    onPressed: (){menuOptions('newgame');}),
+              ),
+              RaisedButton(
+                  child: Text('Change Difficulty',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      )),
+                  color: Colors.red,
+                  padding: const EdgeInsets.all(16.0),
+                    onPressed: (){menuOptions('difficulty');}),
+              Expanded(
+                child: RaisedButton(
+                    child: Text('Quit Game',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        )),
+                    color: Colors.blue,
+                    padding: const EdgeInsets.all(16.0),
+                    onPressed: (){menuOptions('quit');}),
+              ),
+            ],
+          ),
         ],
       ),
     );
