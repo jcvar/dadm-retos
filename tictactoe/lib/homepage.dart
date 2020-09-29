@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -46,21 +47,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   void playGame(GameButton gb) {
+    SystemSound.play(SystemSoundType.click);
     if (gb.enabled) {
       setState(() {
         gb.enabled = false;
         if (activep == 1) {
-          gb.text = '❌';
-          gb.bg = Colors.blue;
+          // gb.text = '❌';
+          gb.text = 'images/icon-x.png';
+          // gb.bg = Colors.blue;
           activep = 2;
           p1.add(gb.id);
           checkWinner(1, p1);
         } else {
-          gb.text = '⭕️';
-          gb.bg = Colors.red;
-          activep = 1;
-          p2.add(gb.id);
-          checkWinner(2, p2);
+          //Timer(Duration(seconds: 1), () {
+          Future.delayed(const Duration(milliseconds: 500), () {
+            setState(() {
+              // gb.text = '⭕️';
+              gb.text = 'images/icon-o.png';
+              // gb.bg = Colors.red;
+              activep = 1;
+              p2.add(gb.id);
+              checkWinner(2, p2);
+            });
+          });
         }
       });
     }
@@ -218,10 +227,13 @@ class _HomePageState extends State<HomePage> {
                     child: RaisedButton(
                       padding: const EdgeInsets.all(8.0),
                       onPressed: () => playGame(buttonsList[i]),
-                      child: Text(
-                        buttonsList[i].text,
-                        style: TextStyle(color: Colors.white, fontSize: 20.0),
-                      ),
+                      child: buttonsList[i].text == ''
+                          ? Text(
+                              buttonsList[i].text,
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 20.0),
+                            )
+                          : Image(image: AssetImage(buttonsList[i].text)),
                       color: buttonsList[i].bg,
                       disabledColor: buttonsList[i].bg,
                     ))),
@@ -242,7 +254,9 @@ class _HomePageState extends State<HomePage> {
                         )),
                     color: Colors.blue,
                     padding: const EdgeInsets.all(16.0),
-                    onPressed: (){menuOptions('newgame');}),
+                    onPressed: () {
+                      menuOptions('newgame');
+                    }),
               ),
               RaisedButton(
                   child: Text('Change Difficulty',
@@ -251,7 +265,9 @@ class _HomePageState extends State<HomePage> {
                       )),
                   color: Colors.red,
                   padding: const EdgeInsets.all(16.0),
-                    onPressed: (){menuOptions('difficulty');}),
+                  onPressed: () {
+                    menuOptions('difficulty');
+                  }),
               Expanded(
                 child: RaisedButton(
                     child: Text('Quit Game',
@@ -260,7 +276,9 @@ class _HomePageState extends State<HomePage> {
                         )),
                     color: Colors.blue,
                     padding: const EdgeInsets.all(16.0),
-                    onPressed: (){menuOptions('quit');}),
+                    onPressed: () {
+                      menuOptions('quit');
+                    }),
               ),
             ],
           ),
