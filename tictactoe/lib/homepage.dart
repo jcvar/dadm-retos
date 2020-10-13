@@ -4,9 +4,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tictactoe/gamebutton.dart';
+import 'package:tictactoe/preferences.dart';
 import 'package:tictactoe/windialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// enum Difficulty { easy, medium, hard }
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,12 +19,15 @@ class _HomePageState extends State<HomePage> {
   var p1;
   var p2;
   var activep;
-  String dffclt;
+  String dffclt = '';
+  bool soundCheck = false;
 
   @override
   void initState() {
     super.initState();
-    dffclt = 'Medium';
+    initPrefs().then((value) {
+      restore();
+    });
     buttonsList = doInit();
   }
 
@@ -47,7 +51,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void playGame(GameButton gb) {
-    SystemSound.play(SystemSoundType.click);
+    if (soundCheck) {
+      SystemSound.play(SystemSoundType.click);
+    }
     if (gb.enabled) {
       setState(() {
         gb.enabled = false;
@@ -136,6 +142,20 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> menuOptions(String value) async {
     switch (value) {
+      case 'preferences':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return PrefsPage();
+            },
+          ),
+        ).then((value) {
+          setState(() {
+            restore();
+          });
+        });
+        break;
       case 'newgame':
         resetGame();
         break;
@@ -191,6 +211,10 @@ class _HomePageState extends State<HomePage> {
             onSelected: menuOptions,
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
+                value: 'preferences',
+                child: Text('Preferences'),
+              ),
+              const PopupMenuItem<String>(
                 value: 'newgame',
                 child: Text('New game'),
               ),
@@ -239,10 +263,18 @@ class _HomePageState extends State<HomePage> {
                     ))),
           ),
           Center(
-            child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text('Difficulty: ' + dffclt,
-                    style: TextStyle(fontSize: 20.0))),
+            child: Column(
+              children: [
+                Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text('Difficulty: ' + dffclt,
+                        style: TextStyle(fontSize: 20.0))),
+                Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text('Sound: ' + (soundCheck ? 'On' : 'Off'),
+                        style: TextStyle(fontSize: 20.0))),
+              ],
+            ),
           ),
           Row(
             children: [
@@ -285,5 +317,13 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  restore() async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    setState(() {
+      soundCheck = (sharedPrefs.getBool('sound') ?? false);
+      dffclt = (sharedPrefs.getString('difficulty') ?? 'none');
+    });
   }
 }
